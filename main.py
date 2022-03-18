@@ -70,8 +70,8 @@ class Obstacle(pygame.sprite.Sprite):
             self.frames = [fiendesoldat_1, fiendesoldat_2]
             y_pos = 300
         else:
-            fiende_1 = pygame.image.load('graphics/Snail/snail1.png').convert_alpha()
-            fiende_2 = pygame.image.load('graphics/Snail/snail2.png').convert_alpha()
+            fiende_1 = pygame.image.load('graphics/förstafiende/fiende1.png').convert_alpha()
+            fiende_2 = pygame.image.load('graphics/förstafiende/fiende2.png').convert_alpha()
             self.frames = [fiende_1, fiende_2]
             y_pos = 300
         self.animation_index = 0
@@ -167,8 +167,8 @@ player_surf = player_walk[player_index]
 player_rect = player_surf.get_rect(midbottom=(80, 300))
 
 # FIENDE SURFACES
-fiende_surface1 = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
-fiende_surface2 = pygame.image.load('graphics/snail/snail2.png').convert_alpha()
+fiende_surface1 = pygame.image.load('graphics/förstafiende/fiende1.png').convert_alpha()
+fiende_surface2 = pygame.image.load('graphics/förstafiende/fiende2.png').convert_alpha()
 cannonball_surf1 = pygame.image.load('graphics/cannonball/cannonball1.png').convert_alpha()
 cannonball_surf2 = pygame.image.load('graphics/cannonball/cannonball2.png').convert_alpha()
 fiendesoldat_surf1 = pygame.image.load('graphics/fiendesoldat/fiendesoldat1.png').convert_alpha()
@@ -238,9 +238,9 @@ while True:
                 start_time = int(pygame.time.get_ticks()/1000)
 
         if event.type == obstacle_timer and game_active and score < 20:
-            obstacle_group.add(Obstacle(choice(['cannonball', 'snail', 'snail', 'snail'])))
+            obstacle_group.add(Obstacle(choice(['cannonball', 'fiende', 'fiende', 'fiende'])))
         elif event.type == obstacle_timer and game_active and  score >= 20:
-            obstacle_group.add(Obstacle(choice(['cannonball', 'snail', 'snail', 'snail', 'fiendesoldat'])))
+            obstacle_group.add(Obstacle(choice(['cannonball', 'fiende', 'fiende', 'fiende', 'fiendesoldat'])))
 
         if event.type == fiende_animation_timer:
             if fiende_frame_index == 0: fiende_frame_index = 1
