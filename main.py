@@ -3,9 +3,14 @@ from sys import exit
 from random import randint, choice
 
 
-# Created by Elliot Fackler
 
 
+# Skapad av Elliot Fackler
+# Heinrich är en riddare vem kommer från Tyskland.
+# Han går till Jerusalem för Popen.
+# Fiender: Fiende, Fiende Soldater, och Cannon Balls
+
+# King of his kingdom: "Heinrich, I have been called on by the Pope to join the 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -27,6 +32,9 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_SPACE] and self.rect.bottom >= 300:
             self.gravity = -20
             self.jump_sound.play()
+        if keys[pygame.K_DOWN]:
+            self.jump_sound.play()
+            self.gravity = 10
 
     def apply_gravity(self):
         self.gravity += 1
@@ -51,15 +59,20 @@ class Player(pygame.sprite.Sprite):
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self, type):
         super().__init__()
-        if type == 'fly':
-            fly_1 = pygame.image.load('graphics/Fly/fly1.png').convert_alpha()
-            fly_2 = pygame.image.load('graphics/Fly/fly2.png').convert_alpha()
-            self.frames = [fly_1, fly_2]
+        if type == 'cannonball':
+            cannonball_1 = pygame.image.load('graphics/cannonball/cannonball1.png').convert_alpha()
+            cannonball_2 = pygame.image.load('graphics/cannonball/cannonball2.png').convert_alpha()
+            self.frames = [cannonball_1, cannonball_2]
             y_pos = 210
+        elif type == 'fiendesoldat':
+            fiendesoldat_1 =  pygame.image.load('graphics/fiendesoldat/fiendesoldat1.png').convert_alpha()
+            fiendesoldat_2 = pygame.image.load('graphics/fiendesoldat/fiendesoldat2.png').convert_alpha()
+            self.frames = [fiendesoldat_1, fiendesoldat_2]
+            y_pos = 300
         else:
-            snail_1 = pygame.image.load('graphics/Snail/snail1.png').convert_alpha()
-            snail_2 = pygame.image.load('graphics/Snail/snail2.png').convert_alpha()
-            self.frames = [snail_1, snail_2]
+            fiende_1 = pygame.image.load('graphics/Snail/snail1.png').convert_alpha()
+            fiende_2 = pygame.image.load('graphics/Snail/snail2.png').convert_alpha()
+            self.frames = [fiende_1, fiende_2]
             y_pos = 300
         self.animation_index = 0
         self.image = self.frames[self.animation_index]
@@ -91,9 +104,9 @@ def obstacle_movement(obstacle_list):
             obstacle_rect.x -= 5
 
             if(obstacle_rect.bottom == 300):
-                screen.blit(snail_surf, obstacle_rect)
+                screen.blit(fiende_surf, obstacle_rect)
             else:
-                screen.blit(fly_surf, obstacle_rect)
+                screen.blit(cannonball_surf, obstacle_rect)
         obstacle_list = [obstacle for obstacle in obstacle_list if obstacle.x >-100]
         return obstacle_list
     else: return []
@@ -124,6 +137,8 @@ def player_animation():
 pygame.init()
 screen = pygame.display.set_mode((800, 400))
 pygame.display.set_caption('Adventures of Heinrich')
+pygame_icon = pygame.image.load('graphics/player/player_walk_1.png').convert_alpha()
+pygame.display.set_icon(pygame_icon)
 clock = pygame.time.Clock()
 test_font = pygame.font.Font('font/Pixeltype.ttf', 50)
 game_active = False
@@ -141,7 +156,7 @@ obstacle_group = pygame.sprite.Group()
 
 
 
-# PLAYER SURFACES
+# SPELARE SURFACES
 player_walk_1 = pygame.image.load('graphics/player/player_walk_1.png').convert_alpha()
 player_walk_2 = pygame.image.load('graphics/player/player_walk_2.png').convert_alpha()
 player_walk = [player_walk_1, player_walk_2]
@@ -151,18 +166,29 @@ player_crouch = pygame.image.load('graphics/player/player_crouch.png').convert_a
 player_surf = player_walk[player_index]
 player_rect = player_surf.get_rect(midbottom=(80, 300))
 
-# ENEMY SURFACES
-snail_surface1 = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
-snail_surface2 = pygame.image.load('graphics/snail/snail2.png').convert_alpha()
-fly_surf1 = pygame.image.load('graphics/Fly/fly1.png').convert_alpha()
-fly_surf2 = pygame.image.load('graphics/Fly/fly2.png').convert_alpha()
-snail_frames = [snail_surface2, snail_surface1]
-snail_frame_index = 0
-fly_frame_index = 0
-fly_frames = [fly_surf2, fly_surf1]
-fly_surf = fly_frames[fly_frame_index]
-snail_surf = snail_frames[snail_frame_index]
+# FIENDE SURFACES
+fiende_surface1 = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
+fiende_surface2 = pygame.image.load('graphics/snail/snail2.png').convert_alpha()
+cannonball_surf1 = pygame.image.load('graphics/cannonball/cannonball1.png').convert_alpha()
+cannonball_surf2 = pygame.image.load('graphics/cannonball/cannonball2.png').convert_alpha()
+fiendesoldat_surf1 = pygame.image.load('graphics/fiendesoldat/fiendesoldat1.png').convert_alpha()
+fiendesoldat_surf2 = pygame.image.load('graphics/fiendesoldat/fiendesoldat2.png').convert_alpha()
+
+fiende_frame_index = 0
+cannonball_frame_index = 0
+fiendesoldat_frame_index = 0
+
+fiende_frames = [fiende_surface2, fiende_surface1]
+cannonball_frames = [cannonball_surf2, cannonball_surf1]
+fiendesoldat_frames = [fiendesoldat_surf2, fiendesoldat_surf1]
+
+cannonball_surf = cannonball_frames[cannonball_frame_index]
+fiende_surf = fiende_frames[fiende_frame_index]
+fiendesoldat_surf = fiendesoldat_frames[fiendesoldat_frame_index]
+
 obstacle_rect_list = []
+
+
 # DISPLAY SURFACES
 sky_surface = pygame.image.load('graphics/Sky.png').convert()
 ground_surface = pygame.image.load('graphics/ground.png').convert()
@@ -171,7 +197,7 @@ player_gravity = 0
 game_name = test_font.render('Adventures of Heinrich', False, (64, 64, 64))
 game_name_rect = game_name.get_rect(center = (400, 80))
 
-game_message = test_font.render('Press space to run', False, (64, 64, 64))
+game_message = test_font.render('Press Space To Run', False, (64, 64, 64))
 game_message_rect = game_message.get_rect(center=(400, 340))
 
 player_stand = pygame.image.load('graphics/Player/player_stand.png').convert_alpha()
@@ -181,11 +207,14 @@ player_stand_rect = player_stand.get_rect(center=(400, 200))
 obstacle_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(obstacle_timer, 1500)
 
-snail_animation_timer = pygame.USEREVENT + 2
-pygame.time.set_timer(snail_animation_timer, 500)
+fiende_animation_timer = pygame.USEREVENT + 2
+pygame.time.set_timer(fiende_animation_timer, 500)
 
-fly_animation_timer = pygame.USEREVENT + 3
-pygame.time.set_timer(fly_animation_timer, 500)
+cannonball_animation_timer = pygame.USEREVENT + 3
+pygame.time.set_timer(cannonball_animation_timer, 500)
+
+fiendesoldat_animation_timer = pygame.USEREVENT + 4
+pygame.time.set_timer(fiendesoldat_animation_timer, 500)
 
 # WHILE LOOP
 while True:
@@ -207,18 +236,26 @@ while True:
                 game_active = True
                 #snail_rect.left = 800
                 start_time = int(pygame.time.get_ticks()/1000)
-        if event.type == obstacle_timer and game_active:
-            obstacle_group.add(Obstacle(choice(['fly', 'snail', 'snail', 'snail'])))
-        if event.type == snail_animation_timer:
-            if snail_frame_index == 0: snail_frame_index =1
-            else: snail_frame_index = 0
-            snail_surf = snail_frames[snail_frame_index]
-        if event.type == fly_animation_timer:
-            if fly_frame_index == 0: fly_frame_index =1
-            else: fly_frame_index = 0
-            fly_surf = fly_frames[fly_frame_index]
+
+        if event.type == obstacle_timer and game_active and score < 20:
+            obstacle_group.add(Obstacle(choice(['cannonball', 'snail', 'snail', 'snail'])))
+        elif event.type == obstacle_timer and game_active and  score >= 20:
+            obstacle_group.add(Obstacle(choice(['cannonball', 'snail', 'snail', 'snail', 'fiendesoldat'])))
+
+        if event.type == fiende_animation_timer:
+            if fiende_frame_index == 0: fiende_frame_index = 1
+            else: fiende_frame_index = 0
+            fiende_surf = fiende_frames[fiende_frame_index]
+        if event.type == cannonball_animation_timer:
+            if cannonball_frame_index == 0: cannonball_frame_index = 1
+            else: cannonball_frame_index = 0
+        if event.type == fiendesoldat_animation_timer:
+            if fiendesoldat_frame_index == 0: fiendesoldat_frame_index = 1
+            else: fiendesoldat_frame_index = 0
+
+
     if game_active:
-        # BACKGROUND
+        # BAKGRUND
         screen.blit(sky_surface, (0, 0))
         screen.blit(ground_surface, (0, 300))
         score = display_score()
@@ -227,18 +264,15 @@ while True:
 
 
 
-        # PLAYER
 
 
+        # SPELARE UPDATE
         player.draw(screen)
         player.update()
-
+        # FIENDE UPDATE
         obstacle_group.draw(screen)
         obstacle_group.update()
-
-
-
-        #collisions
+        # COLLISIONS
         game_active = collision_sprite()
 
     else:
