@@ -73,7 +73,7 @@ class Obstacle(pygame.sprite.Sprite):
             fiende_1 = pygame.image.load('graphics/Snail/snail1.png').convert_alpha()
             fiende_2 = pygame.image.load('graphics/Snail/snail2.png').convert_alpha()
             self.frames = [fiende_1, fiende_2]
-            y_pos = 300
+            y_pos = 290
         self.animation_index = 0
         self.image = self.frames[self.animation_index]
         self.rect = self.image.get_rect(midbottom = (randint(900, 1100), y_pos))
