@@ -73,7 +73,7 @@ class Obstacle(pygame.sprite.Sprite):
             fiende_1 = pygame.image.load('graphics/förstafiende/fiende1.png').convert_alpha()
             fiende_2 = pygame.image.load('graphics/förstafiende/fiende2.png').convert_alpha()
             self.frames = [fiende_1, fiende_2]
-            y_pos = 290
+            y_pos = 300
         self.animation_index = 0
         self.image = self.frames[self.animation_index]
         self.rect = self.image.get_rect(midbottom = (randint(900, 1100), y_pos))
@@ -96,6 +96,15 @@ def display_score():
     time_surf = test_font.render(f'Score: {current_time}', False, (64, 64, 64))
     time_rect = time_surf.get_rect(center=(300, 50))
     screen.blit(time_surf, time_rect)
+    if (score < 20):
+        level = 'Level 1'
+    elif (20 <= score < 40):
+        level = 'Level 2'
+    else:
+        level = 'Level 3'
+    level_load = test_font.render(level, False, (64, 64, 64))
+    level_load_rect = level_load.get_rect(center=(100, 50))
+    screen.blit(level_load, level_load_rect)
     return current_time
 
 def obstacle_movement(obstacle_list):
@@ -234,7 +243,6 @@ while True:
         else:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 game_active = True
-                #snail_rect.left = 800
                 start_time = int(pygame.time.get_ticks()/1000)
 
         if event.type == obstacle_timer and game_active and score < 20:
@@ -259,6 +267,9 @@ while True:
         screen.blit(sky_surface, (0, 0))
         screen.blit(ground_surface, (0, 300))
         score = display_score()
+
+
+
 
 
 
